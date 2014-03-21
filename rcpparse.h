@@ -1,0 +1,114 @@
+#ifndef RCPPARSE_H
+#define RCPPARSE_H
+
+#include <stdint.h>
+
+#define MAX_SAMPLES 50
+#define NUMERIC(c) (('0' <= c) && (c <= '9'))
+
+// It's worse than I thought -- even with the bitmap, channel IDs
+// depend on the current config. Both the sender and receiver configs
+// have to be in sync with respect to which channels are enabled.
+
+#define CHANNELS(CHANNEL)			\
+  CHANNEL(ANALOG_0)				\
+  CHANNEL(ANALOG_1)				\
+  CHANNEL(ANALOG_2)				\
+  CHANNEL(ANALOG_3)				\
+  CHANNEL(ANALOG_4)				\
+  CHANNEL(ANALOG_5)				\
+  CHANNEL(ANALOG_6)				\
+  CHANNEL(ANALOG_7)				\
+  CHANNEL(FREQ_0)				\
+  CHANNEL(FREQ_1)				\
+  CHANNEL(FREQ_2)				\
+  CHANNEL(ACCEL_0)				\
+  CHANNEL(ACCEL_1)				\
+  CHANNEL(ACCEL_2)				\
+  CHANNEL(ACCEL_3)				\
+  CHANNEL(PWM_0)				\
+  CHANNEL(PWM_1)				\
+  CHANNEL(PWM_2)				\
+  CHANNEL(GPS_LAT)				\
+  CHANNEL(GPS_LON)				\
+  CHANNEL(GPS_SPEED)				\
+  CHANNEL(GPS_TIME)				\
+  CHANNEL(GPS_SATELITE)				\
+  CHANNEL(TRACK_LAP_COUNT)			\
+  CHANNEL(TRACK_LAP_TIME)			\
+  CHANNEL(TRACK_SPLIT_TIME)			\
+  CHANNEL(TRACK_DISTANCE)			\
+  CHANNEL(TRACK_PREDICTED_TIME)
+
+
+// Define an enum value for each possible channel
+
+#define CHANNEL_ENUM(name)			\
+  name,
+typedef enum {
+  CHANNELS(CHANNEL_ENUM)
+  CHANNELS_END
+} ChannelId;
+
+#define ENABLE(name) name |
+#define EVERYTHING_ENABLED (CHANNELS(ENABLE) 0)
+
+
+// Number of all possible channels, not just enabled ones
+#define MAX_CHANNELS (int(CHANNELS_END) - 1)
+
+// Define a bit mask for each possible channel, and a data-type to
+// represent the a channel configuration
+
+#define CHANNEL_MASKS(name)			\
+  const ChannelConfig name##_ENABLED = (1 << (uint32_t) name);
+typedef uint32_t ChannelConfig;
+CHANNELS(CHANNEL_MASKS)
+
+
+// This class encapsulates the sate machine for the RCP JSON
+// protocol. To use it, derive a subclass that overrides
+// processSample(). Then, feed characters into it with
+// handleChar(). processSample() will be called for each sample
+// received.
+
+class RCPParser {
+
+private:
+
+  enum {
+    IGNORE_EVERYTHING,
+    SAMPLE_FIRST_CHAR,
+    SAMPLE_NTH_CHAR,
+    SAMPLE_HAVE_DECIMAL,
+  } state = IGNORE_EVERYTHING;
+
+  ChannelConfig  config;
+  float         *samples;
+  uint32_t       cursample = 0;
+  bool           negate = false;
+  float          value = 0;
+  float          multiplicand = 0;
+
+  void reset();
+  void resetValue();
+  void pushSample(float v);
+  void processSamples(float samples[],
+		      unsigned int n);
+
+  RCPParser();
+  RCPParser(RCPParser &);
+
+public:
+
+  RCPParser(ChannelConfig c);
+  void handleChar(char c);
+
+protected:
+
+  virtual void processSample(float s,
+			     ChannelId i) = 0;
+
+};
+
+#endif
