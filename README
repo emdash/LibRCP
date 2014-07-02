@@ -1,0 +1,31 @@
+Overview
+
+ LibRCP is a C++ library for decoding the telemetry stream sent by the
+ RaceCapturePro data logger. It is written with embedded systems in
+ mind, and has constant space requirements. While the telemetry format
+ used by RaceCapturePro is JSON-based, LibRCP can only handle the
+ RaceCapturePro telemetry format in use at the time of this writing
+ (June, 2014) is not a full JSON parser.
+
+Useage
+
+ There is no installation proceedure. Simply include the library in
+ your project. A sample Makefile is provided which builds two targets:
+ rcpparse and gui. Both read from stdin. A sample data stream captured
+ from a race capture pro device is provided.
+
+Examples
+
+ Decode sample datastream file to stdout:
+
+  $ ./rcpparse < datastream
+
+ Display live telemetry data from a serial interface on
+ /dev/ttyS0. This assumes the serial port is configured to the correct
+ baud rate.
+ 
+  $ ./gui < /dev/ttyS0
+
+ Display data from telemetry generator:
+
+  $ python rcpsender.py | ./gui
