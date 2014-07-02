@@ -5,9 +5,9 @@ Overview
  mind, and has constant space requirements. While the telemetry format
  used by RaceCapturePro is JSON-based, LibRCP can only handle the
  RaceCapturePro telemetry format in use at the time of this writing
- (June, 2014) is not a full JSON parser.
+ (June, 2014). It is not a full JSON parser.
 
-Useage
+Usage
 
  There is no installation proceedure. Simply include the library in
  your project. A sample Makefile is provided which builds two targets:
@@ -15,6 +15,11 @@ Useage
  from a race capture pro device is provided.
 
 Examples
+
+ First, build the source (you will need gtk+2.0-dev installed to build
+ the gui example):
+
+  $ make
 
  Decode sample datastream file to stdout:
 
@@ -29,3 +34,4 @@ Examples
  Display data from telemetry generator:
 
   $ python rcpsender.py | ./gui
+
