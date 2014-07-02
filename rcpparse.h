@@ -84,7 +84,7 @@ private:
   } state = IGNORE_EVERYTHING;
 
   ChannelConfig  config;
-  float         *samples;
+  float          samples[MAX_CHANNELS];
   uint32_t       cursample = 0;
   bool           negate = false;
   float          value = 0;
