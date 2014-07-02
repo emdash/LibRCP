@@ -4,3 +4,8 @@ CFLAGS = '-std=c++11'
 all: gtkmain.cpp main.cpp rcpparse.cpp rcpparse.h
 	g++ -o rcpparse main.cpp rcpparse.cpp $(CFLAGS)
 	g++ -o gui gtkmain.cpp rcpparse.cpp $(CFLAGS) $(GTK_CFLAGS)
+
+clean:
+	rm -f rcpparse
+	rm -f gui
+	rm *~
