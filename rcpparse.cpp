@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "rcpparse.h"
 
 
@@ -22,8 +21,6 @@ population(ChannelConfig config)
 RCPParser::RCPParser(ChannelConfig c)
 {
   config = c;
-
-  samples = new float[population(config)];
 }
 
 
@@ -126,7 +123,6 @@ RCPParser::processSamples(float samples[],
       if (sampleRecordBitmap & 1) {
 	processSample(samples[i++], ChannelId(channel));
       }
-
       sampleRecordBitmap >>= 1;
     }
 
