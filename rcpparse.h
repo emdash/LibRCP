@@ -35,6 +35,10 @@
 // depend on the current config. Both the sender and receiver configs
 // have to be in sync with respect to which channels are enabled.
 
+// The CHANNELS macro defines all the channel names. It is used in
+// several places to avoid keeping copies of this list in sync. If you
+// want to add a new channel name, add it here. Be aware that changes
+// to this list will affect channel numbering.
 #define CHANNELS(CHANNEL)			\
   CHANNEL(ANALOG_0)				\
   CHANNEL(ANALOG_1)				\
@@ -67,9 +71,9 @@
 
 
 // Define an enum value for each possible channel
-
 #define CHANNEL_ENUM(name)			\
   name,
+
 typedef enum {
   CHANNELS(CHANNEL_ENUM)
   CHANNELS_END
@@ -82,11 +86,12 @@ typedef enum {
 // Number of all possible channels, not just enabled ones
 #define MAX_CHANNELS (int(CHANNELS_END) - 1)
 
-// Define a bit mask for each possible channel, and a data-type to
-// represent the a channel configuration
 
+// Define a bit mask for each possible channel, and a data-type to
+// represent a channel configuration
 #define CHANNEL_MASKS(name)			\
   const ChannelConfig name##_ENABLED = (1 << (uint32_t) name);
+
 typedef uint32_t ChannelConfig;
 CHANNELS(CHANNEL_MASKS)
 
@@ -95,8 +100,7 @@ CHANNELS(CHANNEL_MASKS)
 // protocol. To use it, derive a subclass that overrides
 // processSample(). Then, feed characters into it with
 // handleChar(). processSample() will be called for each sample
-// received.
-
+// decoded.
 class RCPParser {
 
 private:
